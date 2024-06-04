@@ -66,3 +66,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
 - Master Orchestrator Pipeline
 - Config Parser Pipeline
 - Ingestion Pipeline
+## Limitation 
+- If you are using SQL Server to host control table, it must be SQL Server 2016 (13.x) and later in order to support OPENJSON function.
+- Framework expects `Watermark column` to be of timestamp datatype. But copy data tool from ADF support identity column or column with monotonically increasing value.
+- Schema evolution cases are not handled. 
