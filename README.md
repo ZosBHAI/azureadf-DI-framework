@@ -16,7 +16,9 @@ This is a pet project done as a part of my azure adf learning.  In this project 
 - 2 ingestion pattern supported (full load and incremental)
 - For incremental load, use Watermark column to read the delta records. Watermark column needs to be timestamp column.  
 - For incremental load , delta records are identified using the logic `Watermark column >= last succesful execution`
-- Pictorical representation of Incremental logic
+- Pictorical representation of Incremental logic.
+    - Ref: [https://techcommunity.microsoft.com/t5/azure-data-factory-blog/metadata-driven-pipelines-for-dynamic-full-and-incremental/ba-p/3925362]
+  
 - Description of important columns in Control tables.
     | Column | Table Name |Description |
     | ------ | ------ |  ------ |
