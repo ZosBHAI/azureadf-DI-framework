@@ -89,8 +89,8 @@ SQL Script can be executed using following Activity
  - Limitation:
         Max 5k rows are returned or 2 MB of Data
 
-  3)Pre Copy Script in COPY ACTIVITY (u can Paste the SQL)
-  4)Script Activity
+  3) Pre Copy Script in COPY ACTIVITY (u can Paste the SQL)
+  4) Script Activity
   - Support following type of query:
        - Query Radio Button
             - SELECT * from table.
