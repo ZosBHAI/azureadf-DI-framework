@@ -18,6 +18,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
 - For incremental load , delta records are identified using the logic `Watermark column >= last succesful execution`
 - Pictorical representation of Incremental logic.
     - Ref: [https://techcommunity.microsoft.com/t5/azure-data-factory-blog/metadata-driven-pipelines-for-dynamic-full-and-incremental/ba-p/3925362]
+    - ![Alt text](/diagram/ADF_incremental_DI_flow.png?raw=true "Incremental Data Ingestion Flow")
   
 - Description of important columns in Control tables.
     | Column | Table Name |Description |
