@@ -1,0 +1,54 @@
+{
+	"name": "ds_mddi_parquet_parameterized",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_parameterized",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"storageAccount": {
+					"value": "@dataset().storageAccount",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"storageAccount": {
+				"type": "string"
+			},
+			"fileSystem": {
+				"type": "string"
+			},
+			"directory": {
+				"type": "string"
+			},
+			"fileName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "MDDI_Version01"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().fileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().directory",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().fileSystem",
+					"type": "Expression"
+				}
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,25 @@
+{
+	"name": "ls_asdb_parameterized",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"url": {
+				"type": "string"
+			},
+			"username": {
+				"type": "string"
+			},
+			"password": {
+				"type": "string"
+			},
+			"database": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().url};Initial Catalog=@{linkedService().database};User ID=@{linkedService().username};Password=@{linkedService().password}"
+		}
+	}
+}

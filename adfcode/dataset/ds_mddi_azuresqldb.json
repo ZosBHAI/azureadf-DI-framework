@@ -1,0 +1,64 @@
+{
+	"name": "ds_mddi_azuresqldb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_asdb_parameterized",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"url": {
+					"value": "@dataset().url",
+					"type": "Expression"
+				},
+				"username": {
+					"value": "@dataset().username",
+					"type": "Expression"
+				},
+				"password": {
+					"value": "@dataset().password",
+					"type": "Expression"
+				},
+				"database": {
+					"value": "@dataset().database",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"url": {
+				"type": "string"
+			},
+			"username": {
+				"type": "string"
+			},
+			"password": {
+				"type": "string"
+			},
+			"database": {
+				"type": "string"
+			},
+			"tablename": {
+				"type": "string"
+			},
+			"schema": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "MDDI_Version01"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().tablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

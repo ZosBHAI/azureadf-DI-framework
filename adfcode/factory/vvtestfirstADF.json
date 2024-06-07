@@ -1,0 +1,24 @@
+{
+	"name": "vvtestfirstADF",
+	"properties": {
+		"globalParameters": {
+			"ADLSStorageAccount": {
+				"type": "string",
+				"value": "vvtestadfdevsg"
+			},
+			"TESTGlobalParam": {
+				"type": "object",
+				"value": {
+					"schema": "dbo",
+					"table": "customer_table"
+				}
+			}
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "c6bf7f2b-7052-49c5-8e86-326c6ae44789",
+		"tenantId": "370c1af5-fd97-4463-87a9-07bc11420702"
+	}
+}

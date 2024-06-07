@@ -1,0 +1,471 @@
+{
+	"name": "pl_jdbc_config_parser",
+	"properties": {
+		"activities": [
+			{
+				"name": "get_configuration",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "select  config  from [controlTable].[TestMetadataControlTable] where sourceName = '@{pipeline().parameters.source}' and tableName = '@{pipeline().parameters.tableName}'",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "check_loading_statergy",
+				"type": "Switch",
+				"dependsOn": [
+					{
+						"activity": "get_configuration",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "check_for_firstload_flag",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).DataLoadingBehaviorSettings.dataLoadingBehavior)",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "full",
+							"activities": [
+								{
+									"name": "trigger_fullload",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "pl_fullload_jdbc_sql_child",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"url": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.url)",
+												"type": "Expression"
+											},
+											"username": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.username)",
+												"type": "Expression"
+											},
+											"password": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.password)",
+												"type": "Expression"
+											},
+											"schema": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.schema)",
+												"type": "Expression"
+											},
+											"tablename": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.table)",
+												"type": "Expression"
+											},
+											"storageAccount": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.storageAccount)",
+												"type": "Expression"
+											},
+											"fileSystem": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.fileSystem)",
+												"type": "Expression"
+											},
+											"directory": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.directory)",
+												"type": "Expression"
+											},
+											"blobPartitionColumn": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.partitionColName)",
+												"type": "Expression"
+											},
+											"executionDate": {
+												"value": "@pipeline().parameters.execution_date",
+												"type": "Expression"
+											},
+											"database": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.database)",
+												"type": "Expression"
+											},
+											"targetSchema": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.targetSchema)",
+												"type": "Expression"
+											},
+											"targetTable": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.targetTable)",
+												"type": "Expression"
+											},
+											"fileName": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.fileName)",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "incr",
+							"activities": [
+								{
+									"name": "increment_load",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "pl_incr_jdbc_sql_child",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"url": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.url)",
+												"type": "Expression"
+											},
+											"username": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.username)",
+												"type": "Expression"
+											},
+											"password": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.password)",
+												"type": "Expression"
+											},
+											"schema": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.schema)",
+												"type": "Expression"
+											},
+											"tablename": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.table)",
+												"type": "Expression"
+											},
+											"storageAccount": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.storageAccount)",
+												"type": "Expression"
+											},
+											"fileSystem": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.fileSystem)",
+												"type": "Expression"
+											},
+											"directory": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.directory)",
+												"type": "Expression"
+											},
+											"blobPartitionColumn": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.partitionColName)",
+												"type": "Expression"
+											},
+											"executionDate": {
+												"value": "@pipeline().parameters.execution_date",
+												"type": "Expression"
+											},
+											"database": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SourceObjectSettings.database)",
+												"type": "Expression"
+											},
+											"targetSchema": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.targetSchema)",
+												"type": "Expression"
+											},
+											"targetTable": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.targetTable)",
+												"type": "Expression"
+											},
+											"watermarkColumnName": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).DataLoadingBehaviorSettings.watermarkColumnName)",
+												"type": "Expression"
+											},
+											"watermarkLookbackDays": {
+												"value": "@int(json(activity('get_configuration').output.resultSets[0].rows[0].config).DataLoadingBehaviorSettings.watermarkLookbackDays)",
+												"type": "Expression"
+											},
+											"stageSchema": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.stageSchema)",
+												"type": "Expression"
+											},
+											"lastSuccessExecDate": {
+												"value": "@variables('lastSuccessFullExecDate')",
+												"type": "Expression"
+											},
+											"firstload": {
+												"value": "@pipeline().parameters.firstload",
+												"type": "Expression"
+											},
+											"primaryKey": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).DataLoadingBehaviorSettings.primaryKey)",
+												"type": "Expression"
+											},
+											"fileName": {
+												"value": "@string(json(activity('get_configuration').output.resultSets[0].rows[0].config).SinkObjectSettings.fileName)",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "update_ingestion_status_success",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "check_loading_statergy",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "NonQuery",
+							"text": {
+								"value": "Delete from [controlTable].[TestPipelineRun] where sourceName = '@{pipeline().parameters.source}' and TableName='@{pipeline().parameters.tableName}' and ExecDate = '@{pipeline().parameters.execution_date}';\nInsert into [controlTable].[TestPipelineRun] (sourceName,TableName,Status,ExecDate,LastSuccessfullExecDate) values('@{pipeline().parameters.source}','@{pipeline().parameters.tableName}','Success','@{pipeline().parameters.execution_date}','@{pipeline().parameters.execution_date}')\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "update_ingestion_status_fail",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "check_loading_statergy",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "NonQuery",
+							"text": {
+								"value": "Delete from [controlTable].[TestPipelineRun] where sourceName = '@{pipeline().parameters.source}' and TableName='@{pipeline().parameters.tableName}' and ExecDate = '@{pipeline().parameters.execution_date}';\nInsert into [controlTable].[TestPipelineRun] (sourceName,TableName,Status,ExecDate,LastSuccessfullExecDate) values('@{pipeline().parameters.source}','@{pipeline().parameters.tableName}','Failed','@{pipeline().parameters.execution_date}',@{variables('lastSuccessFullExecDate')})\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "check_for_firstload_flag",
+				"type": "IfCondition",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(pipeline().parameters.firstload,'F')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "get_lastsuccessfull_execution_date_first",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_AzureSqlDatabase",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "select '-1' as last_success_date",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "firstload_set_last_success_executiondate",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "get_lastsuccessfull_execution_date_first",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "lastSuccessFullExecDate",
+								"value": {
+									"value": "@{activity('get_lastsuccessfull_execution_date_first').output.resultSets[0].rows[0].last_success_date}",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "get_lastsuccessfull_execution_date",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_AzureSqlDatabase",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "select coalesce(max(LastSuccessfullExecDate),'-1') as last_success_date from [controlTable].[TestPipelineRun] where sourceName = '@{pipeline().parameters.source}' and   TableName = '@{pipeline().parameters.tableName}'",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "normal_load_last_successrun",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "get_lastsuccessfull_execution_date",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "lastSuccessFullExecDate",
+								"value": {
+									"value": "@{activity('get_lastsuccessfull_execution_date').output.resultSets[0].rows[0].last_success_date}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"execution_date": {
+				"type": "string"
+			},
+			"source": {
+				"type": "string"
+			},
+			"tableName": {
+				"type": "string"
+			},
+			"firstload": {
+				"type": "string",
+				"defaultValue": "F"
+			}
+		},
+		"variables": {
+			"loadingbehaviour": {
+				"type": "String"
+			},
+			"lastSuccessFullExecDate": {
+				"type": "String"
+			},
+			"foroutput": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "MDDI_V01"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-05-22T09:54:20Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

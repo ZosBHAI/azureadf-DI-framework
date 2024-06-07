@@ -1,0 +1,287 @@
+{
+	"name": "pl_fullload_jdbc_sql_child",
+	"properties": {
+		"activities": [
+			{
+				"name": "fulload_read_jdbc",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"additionalColumns": [
+							{
+								"name": "row_extract_dttm",
+								"value": {
+									"value": "@formatDateTime(utcNow(),'yyyy-MM-dd-hh-mm-ss')",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "batch_exec_date",
+								"value": {
+									"value": "@pipeline().parameters.executionDate",
+									"type": "Expression"
+								}
+							}
+						],
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_mddi_azuresqldb",
+						"type": "DatasetReference",
+						"parameters": {
+							"url": {
+								"value": "@pipeline().parameters.url",
+								"type": "Expression"
+							},
+							"username": {
+								"value": "@pipeline().parameters.username",
+								"type": "Expression"
+							},
+							"password": {
+								"value": "@pipeline().parameters.password",
+								"type": "Expression"
+							},
+							"database": {
+								"value": "@pipeline().parameters.database",
+								"type": "Expression"
+							},
+							"tablename": {
+								"value": "@pipeline().parameters.tablename",
+								"type": "Expression"
+							},
+							"schema": {
+								"value": "@pipeline().parameters.schema",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_mddi_parquet_parameterized",
+						"type": "DatasetReference",
+						"parameters": {
+							"storageAccount": {
+								"value": "@pipeline().parameters.storageAccount",
+								"type": "Expression"
+							},
+							"fileSystem": {
+								"value": "@pipeline().parameters.fileSystem",
+								"type": "Expression"
+							},
+							"directory": {
+								"value": "@concat(pipeline().parameters.directory,'/',pipeline().parameters.schema,'/',pipeline().parameters.tablename,'/',pipeline().parameters.blobPartitionColumn,'=',pipeline().parameters.executionDate)",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@concat(pipeline().parameters.fileName,'.parquet')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "fulload_blob_to_asqldb",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "fulload_read_jdbc",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.directory,'/',pipeline().parameters.schema,'/',pipeline().parameters.tablename,'/',pipeline().parameters.blobPartitionColumn,'=',pipeline().parameters.executionDate)",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "ParquetReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": {
+							"value": "DROP table if exists [@{pipeline().parameters.targetSchema}].[@{pipeline().parameters.targetTable}]",
+							"type": "Expression"
+						},
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_mddi_parquet_parameterized",
+						"type": "DatasetReference",
+						"parameters": {
+							"storageAccount": {
+								"value": "@pipeline().parameters.storageAccount",
+								"type": "Expression"
+							},
+							"fileSystem": {
+								"value": "@pipeline().parameters.fileSystem",
+								"type": "Expression"
+							},
+							"directory": {
+								"value": "@concat(pipeline().parameters.directory,'/',pipeline().parameters.schema,'/',pipeline().parameters.tablename,'/',pipeline().parameters.blobPartitionColumn,'=',pipeline().parameters.executionDate)",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@pipeline().parameters.fileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_mddi_azuresqldb",
+						"type": "DatasetReference",
+						"parameters": {
+							"url": {
+								"value": "@pipeline().parameters.url",
+								"type": "Expression"
+							},
+							"username": {
+								"value": "@pipeline().parameters.username",
+								"type": "Expression"
+							},
+							"password": {
+								"value": "@pipeline().parameters.password",
+								"type": "Expression"
+							},
+							"database": {
+								"value": "@pipeline().parameters.database",
+								"type": "Expression"
+							},
+							"tablename": {
+								"value": "@pipeline().parameters.targetTable",
+								"type": "Expression"
+							},
+							"schema": {
+								"value": "@pipeline().parameters.targetSchema",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"url": {
+				"type": "string"
+			},
+			"username": {
+				"type": "string"
+			},
+			"password": {
+				"type": "string"
+			},
+			"schema": {
+				"type": "string"
+			},
+			"tablename": {
+				"type": "string"
+			},
+			"storageAccount": {
+				"type": "string"
+			},
+			"fileSystem": {
+				"type": "string"
+			},
+			"directory": {
+				"type": "string"
+			},
+			"blobPartitionColumn": {
+				"type": "string"
+			},
+			"executionDate": {
+				"type": "string"
+			},
+			"database": {
+				"type": "string"
+			},
+			"targetSchema": {
+				"type": "string"
+			},
+			"targetTable": {
+				"type": "string"
+			},
+			"fileName": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"foroutput": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "MDDI_V01"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-05-22T09:54:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

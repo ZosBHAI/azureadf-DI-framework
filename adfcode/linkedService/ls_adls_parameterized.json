@@ -1,0 +1,25 @@
+{
+	"name": "ls_adls_parameterized",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"storageAccount": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "@{concat('https://',linkedService().storageAccount,'.dfs.core.windows.net/')}",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "ls_azurekeyvault_gen2_access",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "adf-gen2-ls-access",
+				"secretVersion": "4c1b93f285564ebd8a1b936ab7a7041e"
+			}
+		}
+	}
+}
