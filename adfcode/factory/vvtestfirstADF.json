@@ -5,13 +5,6 @@
 			"ADLSStorageAccount": {
 				"type": "string",
 				"value": "vvtestadfdevsg"
-			},
-			"TESTGlobalParam": {
-				"type": "object",
-				"value": {
-					"schema": "dbo",
-					"table": "customer_table"
-				}
 			}
 		}
 	},
