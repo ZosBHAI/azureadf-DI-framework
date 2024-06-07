@@ -1,0 +1,72 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "vvtestfirstADF"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"ls_AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
+		"ls_AzureSqlDatabase_connectionString": {
+			"value": ""
+		},
+		"ls_adlsconnection_accountKey": {
+			"value": ""
+		},
+		"ls_asdb_parameterized_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().url};Initial Catalog=@{linkedService().database};User ID=@{linkedService().username};Password=@{linkedService().password}"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://vvtestadfdevsg.dfs.core.windows.net/"
+		},
+		"ls_AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://vvtestadfdevsg.dfs.core.windows.net/"
+		},
+		"ls_adls_parameterized_properties_typeProperties_url": {
+			"value": "@{concat('https://',linkedService().storageAccount,'.dfs.core.windows.net/')}"
+		},
+		"ls_adlsconnection_properties_typeProperties_url": {
+			"value": "https://vvtestadfdevsg.dfs.core.windows.net/"
+		},
+		"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
+			"value": "https://kv-gen2-accesskey-adf.vault.azure.net/"
+		},
+		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+			"value": "source1"
+		},
+		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload": {
+			"value": "F"
+		},
+		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+			"value": "F"
+		},
+		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+			"value": "source1"
+		},
+		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
+			"value": "T"
+		},
+		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+			"value": "F"
+		},
+		"source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+			"value": "source2"
+		},
+		"source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
+			"value": "T"
+		},
+		"source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+			"value": "F"
+		},
+		"source2_subsequent_properties_pl_master_orch_jdbc_parameters_sourcename": {
+			"value": "source2"
+		},
+		"source2_subsequent_properties_pl_master_orch_jdbc_parameters_firstload": {
+			"value": "F"
+		}
+	}
+}

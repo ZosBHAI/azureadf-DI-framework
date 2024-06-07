@@ -1,0 +1,6 @@
+{
+	"ADLSStorageAccount": {
+		"type": "string",
+		"value": "vvtestadfdevsg"
+	}
+}
