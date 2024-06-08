@@ -2,7 +2,7 @@
 This is a pet project done as a part of my azure adf learning.  In this project I have tried to build a Data Ingestion framework for JDBC sources. It is tested on  Azure SQL DB.
 ## Requirement
 1. Easy to onboard new JDBC type with minimal changes in the ingestion framework.
-2. Restart only the failed tables in the subsequent run
+2. Rerun only the failed tables in the subsequent run
 3. Track the run status of each table associated with a source.
 4. Adding a new type of source doesn't change the structure of the existing configuration table.
 ## Design
