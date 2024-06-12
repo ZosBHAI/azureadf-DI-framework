@@ -1,0 +1,71 @@
+{
+	"name": "tst_pl_generate_execution_date",
+	"properties": {
+		"activities": [
+			{
+				"name": "generate_batch_execution_date",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[controlTable].[GetExecutionDateV05]",
+						"storedProcedureParameters": {
+							"execdate": {
+								"type": "String",
+								"value": null
+							},
+							"firstload": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.firstload",
+									"type": "Expression"
+								}
+							},
+							"previousrunstatus": {
+								"type": "String",
+								"value": null
+							},
+							"sourcename": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.sourcename",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_mddi_controlTable_sqldb",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"sourcename": {
+				"type": "string"
+			},
+			"firstload": {
+				"type": "string"
+			},
+			"retryfailedflag": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "test_MDDI_V01"
+		},
+		"annotations": []
+	}
+}
