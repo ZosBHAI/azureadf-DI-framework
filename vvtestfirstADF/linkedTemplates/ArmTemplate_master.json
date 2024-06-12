@@ -166,15 +166,6 @@
 					},
 					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
 						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
-					},
-					"source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
-						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
-					},
-					"source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
-						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]"
-					},
-					"source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
-						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
 					}
 				}
 			},
@@ -193,6 +184,15 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
+					},
+					"source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
+						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]"
+					},
+					"source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
 					},
 					"source2_subsequent_properties_pl_master_orch_jdbc_parameters_sourcename": {
 						"value": "[parameters('source2_subsequent_properties_pl_master_orch_jdbc_parameters_sourcename')]"
