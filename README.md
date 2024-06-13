@@ -66,7 +66,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
               }
         }
 ## Framework Structure 
-- Master Orchestrator Pipeline(pl_master_orch_jdbc)
+- Master Orchestrator Pipeline [pl_master_orch_jdbc]
     -  Generate the batch execution date.
         -  inputs:
             -  sourcename
@@ -80,21 +80,25 @@ This is a pet project done as a part of my azure adf learning.  In this project 
                 - accepted values :  T or F   
     -  Get the list of objects associated with source.
     -  Trigger the Config Parser Pipeline  for each table associated with the source.
-- Config Parser Pipeline(pl_jdbc_config_parser)
-    - Get the configuration for specific table
-    - Compute the last succesfull execution logic 
+- Config Parser Pipeline[pl_jdbc_config_parser]
+    - Get the configuration for specific table from `TestMetadataControlTable`.
+    - Compute the last succesfull execution logic.
+    	- if the first load flag is True, then return `-1` as last successfull execution date.
+     	- if the first load flag is False, then return execution date of table's last successfully completed from  TestPipelineRun.
+      	- if the table is not present in the  TestPipelineRun, then return `-1` as last successfull execution date.
     - Check for  the ingestion stratergy and trigger the load.
-        - For full load, trigger pl_fullload_jdbc_sql_child
-        - For incremental load, trigger pl_incr_jdbc_sql_child
-    - Capture the status of ingestion statergy in control table 
+        - For full load, trigger `pl_fullload_jdbc_sql_child`
+        - For incremental load, trigger `pl_incr_jdbc_sql_child`
+    - Capture the status of ingestion in `TestPipelineRun` control table. 
 - Ingestion Pipeline
-    - Incremental load  Pipeline ( pl_incr_jdbc_sql_child) 
+    - Incremental load  Pipeline [pl_incr_jdbc_sql_child]
         - If the first load flag is True, read entire table.Else read the records greater than the last successfull execution date.
         - Data read from the source table is stored in the Azure blob storage.
         - Read the data from Azure blob storage to Stage table
         - Stage tables stores the delta records for the day.
+        - For first load, drop the table and recreate the table. Table structure is same as the Stage table structure.
         - For subsequent load, merge the stage table with target table.
-    - Full load Pipeline (pl_fullload_jdbc_sql_child)
+    - Full load Pipeline [pl_fullload_jdbc_sql_child]
         - Read all the  records from source
         - Write all the records to Azure blob storage and target table.
 ## Limitation 
