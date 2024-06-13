@@ -80,7 +80,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
                 - accepted values :  T or F   
     -  Get the list of objects associated with source.
     -  Trigger the Config Parser Pipeline  for each table associated with the source.
-- Config Parser Pipeline[pl_jdbc_config_parser]
+- Config Parser Pipeline [[pl_jdbc_config_parser](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/diagram/parser_pipelineflow.png)]
     - Get the configuration for specific table from `TestMetadataControlTable`.
     - Compute the last succesfull execution logic.
     	- if the first load flag is True, then return `-1` as last successfull execution date.
@@ -89,7 +89,8 @@ This is a pet project done as a part of my azure adf learning.  In this project 
     - Check for  the ingestion stratergy and trigger the load.
         - For full load, trigger `pl_fullload_jdbc_sql_child`
         - For incremental load, trigger `pl_incr_jdbc_sql_child`
-    - Capture the status of ingestion in `TestPipelineRun` control table. 
+    - Capture the status of ingestion in `TestPipelineRun` control table.
+  
 - Ingestion Pipeline
     - Incremental load  Pipeline [pl_incr_jdbc_sql_child]
         - If the first load flag is True, read entire table.Else read the records greater than the last successfull execution date.
