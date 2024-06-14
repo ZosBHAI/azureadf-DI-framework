@@ -67,7 +67,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
         }
 ## Framework Structure 
 - Master Orchestrator Pipeline [pl_master_orch_jdbc]
-    -  Generate the batch execution date.
+    -  Generate the batch execution date. [[flowchart](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/diagram/batch_execution_date_logic.md)]
         -  inputs:
             -  sourcename
             -  firstloadflag
