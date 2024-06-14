@@ -78,7 +78,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
                 - description : This flag selectively restart the failed tables from previous run. 
                 - default value : F
                 - accepted values :  T or F   
-    -  Get the list of objects associated with source.
+    -  Get the list of objects associated with source. [[flowchart](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/diagram/get_list_of_objects_tobe_ingested.md)]
     -  Trigger the Config Parser Pipeline  for each table associated with the source.
 - Config Parser Pipeline [[pl_jdbc_config_parser](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/diagram/parser_pipelineflow.png)]
     - Get the configuration for specific table from `TestMetadataControlTable`.
