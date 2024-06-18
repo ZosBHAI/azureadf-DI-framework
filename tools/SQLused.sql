@@ -8,11 +8,19 @@ CREATE TABLE [controlTable].[TestMetadataControlTable](
 				GO
 	
 
----How to INSERT the configuration ----
+--- Create PipelineRun Control table
+CREATE TABLE [controlTable].[TestPipelineRun](
+	[sourceName] [varchar](50) NULL,
+	[TableName] [varchar](50) NULL,
+	[Status] [varchar](20) NULL,
+	[ExecDate] [varchar](30) NULL,
+	[LastSuccessfullExecDate] [varchar](30) NULL
+) ON [PRIMARY]
+GO
 
+-----Stored Procdure to compute the BATCH Execution date
 
-
-DROP PROCEDURE GetExecutionDate;
+DROP PROCEDURE GetExecutionDateV05.GetExecutionDate;
 CREATE PROCEDURE controlTable.GetExecutionDateV05(
     @sourcename VARCHAR(50),
 	@firstload VARCHAR(3),
