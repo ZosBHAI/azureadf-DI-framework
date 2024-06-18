@@ -102,9 +102,15 @@ This is a pet project done as a part of my azure adf learning.  In this project 
     - Full load Pipeline [pl_fullload_jdbc_sql_child]
         - Read all the  records from source
         - Write all the records to Azure blob storage and target table.
+## Installing and Configuring the Framework
+1) Download or Clone this repo. `adfcode` has all the artificats related to   Ingestion framework.
+2) Create the Control table. DDL is available here. [DDL](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/tools/SQLused.sql)
+3) Use the sample configure mentioned above or it is available in the `tools --> SQLused.sql`. 
+4) To run the framework, refer the DEMO SECTION in the Youtube vedio.
 ## Limitation 
 - If you are using SQL Server to host control table, it must be SQL Server 2016 (13.x) and later in order to support OPENJSON function.
 - Framework expects `Watermark column` to be of timestamp datatype. But copy data tool from ADF support identity column or column with monotonically increasing value.
-- Schema evolution cases are not handled.
+- For onboarding new JDBC source, say for example if the source is ORACLE, then the framework has to be modified to inlcude new LinkedService, Dataset poinitng to ORACLE.
+  - Schema evolution cases are not handled.
 ## Things learned as part of building this framework
    [Lessons Learned](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/notes/notes_leasons_learned.md)
