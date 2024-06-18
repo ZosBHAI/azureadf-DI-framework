@@ -1,3 +1,13 @@
+--- Create   Metadata Control table 
+CREATE TABLE [controlTable].[TestMetadataControlTable](
+                [Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                [sourceName] [varchar](100) NULL,
+                [TableName] [varchar](max) NULL,
+				[Config] [nvarchar](max) NULL
+				) ON [PRIMARY]
+				GO
+	
+
 ---How to INSERT the configuration ----
 
 
