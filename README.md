@@ -111,6 +111,6 @@ This is a pet project done as a part of my azure adf learning.  In this project 
 - If you are using SQL Server to host control table, it must be SQL Server 2016 (13.x) and later in order to support OPENJSON function.
 - Framework expects `Watermark column` to be of timestamp datatype. But copy data tool from ADF support identity column or column with monotonically increasing value.
 - For onboarding new JDBC source, say for example if the source is ORACLE, then the framework has to be modified to inlcude new LinkedService, Dataset poinitng to ORACLE.
-  - Schema evolution cases are not handled.
+- Schema evolution cases are not handled.
 ## Things learned as part of building this framework
    [Lessons Learned](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/notes/notes_leasons_learned.md)
