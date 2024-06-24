@@ -1,5 +1,5 @@
-# azureadf-DI-framework (In progress)
-This is a pet project done as a part of my azure adf learning.  In this project I have tried to build a Data Ingestion framework for JDBC sources. It is tested on  Azure SQL DB.
+# azureadf-DI-framework 
+This is done as a part of my azure adf learning.  In this project I have tried to build a Data Ingestion framework for JDBC sources. It is tested on  Azure SQL DB.
 ## Requirement
 1. Easy to onboard new JDBC type with minimal changes in the ingestion framework.
 2. Rerun only the failed tables in the subsequent run
@@ -107,7 +107,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
 1) Download or Clone this repo. `adfcode` has all the artificats related to   Ingestion framework.
 2) Create the Control table. DDL is available here. [DDL](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/tools/SQLused.sql)
 3) Use the sample configuration mentioned above or it is available in the `tools --> SQLused.sql`. 
-4) To run the framework, refer the DEMO SECTION in the Youtube vedio.
+4) To run the framework, refer the DEMO SECTION in the [Youtube vedio](https://www.youtube.com/watch?v=W8quUXYxC7U&pp=ygUSQ3ViaWNsZSB0ZWNoIG5vdGVz).
 ## Limitation 
 - If you are using SQL Server to host control table, it must be SQL Server 2016 (13.x) and later in order to support OPENJSON function.
 - Framework expects `Watermark column` to be of timestamp datatype. But copy data tool from ADF support identity column or column with monotonically increasing value.
