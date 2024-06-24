@@ -103,6 +103,7 @@ This is a pet project done as a part of my azure adf learning.  In this project 
         - Read all the  records from source
         - Write all the records to Azure blob storage and target table.
 ## Installing and Configuring the Framework
+### Note: Code can be imported using a ARM template. It is available [here](https://github.com/ZosBHAI/azureadf-DI-framework/blob/adf_publish/vvtestfirstADF/ARMTemplateForFactory.json)
 1) Download or Clone this repo. `adfcode` has all the artificats related to   Ingestion framework.
 2) Create the Control table. DDL is available here. [DDL](https://github.com/ZosBHAI/azureadf-DI-framework/blob/main/tools/SQLused.sql)
 3) Use the sample configuration mentioned above or it is available in the `tools --> SQLused.sql`. 
