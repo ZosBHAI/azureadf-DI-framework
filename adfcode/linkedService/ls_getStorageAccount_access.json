@@ -1,0 +1,10 @@
+{
+	"name": "ls_getStorageAccount_access",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kv-storageaccount-dlk.vault.azure.net/"
+		}
+	}
+}
