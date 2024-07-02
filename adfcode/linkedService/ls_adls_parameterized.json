@@ -1,6 +1,5 @@
 {
 	"name": "ls_adls_parameterized",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"parameters": {
 			"storageAccount": {
@@ -14,12 +13,12 @@
 			"accountKey": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "ls_azurekeyvault_gen2_access",
+					"referenceName": "ls_getStorageAccount_access",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "adf-gen2-ls-access",
-				"secretVersion": "4c1b93f285564ebd8a1b936ab7a7041e"
+				"secretName": "di-storageaccount-secret"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
