@@ -4,7 +4,11 @@
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://vvtestadfdevsg.dfs.core.windows.net/"
+			"url": "https://vvtestadfdevsg.dfs.core.windows.net/",
+			"credential": {
+				"referenceName": "cred-uami-di-adf-access-storageaccount",
+				"type": "CredentialReference"
+			}
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/linkedservices"
