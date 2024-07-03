@@ -19,10 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_AzureSqlDatabase'"
 		},
-		"ls_adlsconnection_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ls_adlsconnection'"
-		},
 		"ls_asdb_parameterized_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_asdb_parameterized'",
@@ -47,6 +43,10 @@
 		"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://kv-gen2-accesskey-adf.vault.azure.net/"
+		},
+		"ls_getStorageAccount_access_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-storageaccount-dlk.vault.azure.net/"
 		},
 		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
 			"type": "string",
@@ -92,6 +92,10 @@
 			"type": "string",
 			"defaultValue": "F"
 		},
+		"default_properties_ADLSStorageAccount_value": {
+			"type": "string",
+			"defaultValue": "vvtestadfdevsg"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -128,11 +132,11 @@
 					"ls_AzureSqlDatabase_connectionString": {
 						"value": "[parameters('ls_AzureSqlDatabase_connectionString')]"
 					},
-					"ls_adlsconnection_accountKey": {
-						"value": "[parameters('ls_adlsconnection_accountKey')]"
-					},
 					"ls_asdb_parameterized_connectionString": {
 						"value": "[parameters('ls_asdb_parameterized_connectionString')]"
+					},
+					"default_properties_ADLSStorageAccount_value": {
+						"value": "[parameters('default_properties_ADLSStorageAccount_value')]"
 					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
@@ -146,26 +150,11 @@
 					"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
 						"value": "[parameters('ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl')]"
 					},
+					"ls_getStorageAccount_access_properties_typeProperties_baseUrl": {
+						"value": "[parameters('ls_getStorageAccount_access_properties_typeProperties_baseUrl')]"
+					},
 					"ls_adls_parameterized_properties_typeProperties_url": {
 						"value": "[parameters('ls_adls_parameterized_properties_typeProperties_url')]"
-					},
-					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
-						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
-					},
-					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload": {
-						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload')]"
-					},
-					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
-						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
-					},
-					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
-						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
-					},
-					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
-						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]"
-					},
-					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
-						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
 					}
 				}
 			},
@@ -184,6 +173,24 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
+					},
+					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload": {
+						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload')]"
+					},
+					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
+					},
+					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
+					},
+					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
+						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]"
+					},
+					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
 					},
 					"source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
 						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]"

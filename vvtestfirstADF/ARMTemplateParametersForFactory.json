@@ -14,9 +14,6 @@
 		"ls_AzureSqlDatabase_connectionString": {
 			"value": ""
 		},
-		"ls_adlsconnection_accountKey": {
-			"value": ""
-		},
 		"ls_asdb_parameterized_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().url};Initial Catalog=@{linkedService().database};User ID=@{linkedService().username};Password=@{linkedService().password}"
 		},
@@ -34,6 +31,9 @@
 		},
 		"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
 			"value": "https://kv-gen2-accesskey-adf.vault.azure.net/"
+		},
+		"ls_getStorageAccount_access_properties_typeProperties_baseUrl": {
+			"value": "https://kv-storageaccount-dlk.vault.azure.net/"
 		},
 		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
 			"value": "source1"
@@ -67,6 +67,9 @@
 		},
 		"source2_subsequent_properties_pl_master_orch_jdbc_parameters_firstload": {
 			"value": "F"
+		},
+		"default_properties_ADLSStorageAccount_value": {
+			"value": "vvtestadfdevsg"
 		}
 	}
 }

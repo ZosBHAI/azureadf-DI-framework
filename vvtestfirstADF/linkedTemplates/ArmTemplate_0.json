@@ -19,14 +19,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_AzureSqlDatabase'"
 		},
-		"ls_adlsconnection_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ls_adlsconnection'"
-		},
 		"ls_asdb_parameterized_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_asdb_parameterized'",
 			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().url};Initial Catalog=@{linkedService().database};User ID=@{linkedService().username};Password=@{linkedService().password}"
+		},
+		"default_properties_ADLSStorageAccount_value": {
+			"type": "string",
+			"defaultValue": "vvtestadfdevsg"
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
@@ -44,39 +44,31 @@
 			"type": "string",
 			"defaultValue": "https://kv-gen2-accesskey-adf.vault.azure.net/"
 		},
+		"ls_getStorageAccount_access_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-storageaccount-dlk.vault.azure.net/"
+		},
 		"ls_adls_parameterized_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "@{concat('https://',linkedService().storageAccount,'.dfs.core.windows.net/')}"
-		},
-		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
-			"type": "string",
-			"defaultValue": "source1"
-		},
-		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload": {
-			"type": "string",
-			"defaultValue": "F"
-		},
-		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
-			"type": "string",
-			"defaultValue": "F"
-		},
-		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
-			"type": "string",
-			"defaultValue": "source1"
-		},
-		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
-			"type": "string",
-			"defaultValue": "T"
-		},
-		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
-			"type": "string",
-			"defaultValue": "F"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/globalparameters",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"ADLSStorageAccount": {
+					"type": "string",
+					"value": "[parameters('default_properties_ADLSStorageAccount_value')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -132,11 +124,7 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('ls_adlsconnection_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('ls_adlsconnection_accountKey')]"
-					}
+					"url": "[parameters('ls_adlsconnection_properties_typeProperties_url')]"
 				}
 			},
 			"dependsOn": []
@@ -177,6 +165,31 @@
 				"type": "AzureKeyVault",
 				"typeProperties": {
 					"baseUrl": "[parameters('ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_getStorageAccount_access')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('ls_getStorageAccount_access_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cred-uami-di-adf-access-storageaccount')]",
+			"type": "Microsoft.DataFactory/factories/credentials",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {
+					"resourceId": "/subscriptions/3b59f2cb-2455-4729-b77a-604825cb72ab/resourceGroups/vvtes_adf/providers/Microsoft.ManagedIdentity/userAssignedIdentities/di-adf-access-storageaccount"
 				}
 			},
 			"dependsOn": []
@@ -326,74 +339,15 @@
 					"accountKey": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
-							"referenceName": "ls_azurekeyvault_gen2_access",
+							"referenceName": "ls_getStorageAccount_access",
 							"type": "LinkedServiceReference"
 						},
-						"secretName": "adf-gen2-ls-access",
-						"secretVersion": "4c1b93f285564ebd8a1b936ab7a7041e"
+						"secretName": "di-storageaccount-secret"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_azurekeyvault_gen2_access')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_mddi_parquet_parameterized')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_adls_parameterized",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"storageAccount": {
-							"value": "@dataset().storageAccount",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"storageAccount": {
-						"type": "string"
-					},
-					"fileSystem": {
-						"type": "string"
-					},
-					"directory": {
-						"type": "string"
-					},
-					"fileName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "MDDI_Version01"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().fileName",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().directory",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().fileSystem",
-							"type": "Expression"
-						}
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_adls_parameterized')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_getStorageAccount_access')]"
 			]
 		},
 		{
@@ -474,6 +428,64 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_mddi_controlTable_sqldb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_mddi_parquet_parameterized')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_adls_parameterized",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"storageAccount": {
+							"value": "@dataset().storageAccount",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"storageAccount": {
+						"type": "string"
+					},
+					"fileSystem": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					},
+					"fileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "MDDI_Version01"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().fileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().fileSystem",
+							"type": "Expression"
+						}
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adls_parameterized')]"
 			]
 		},
 		{
@@ -2050,271 +2062,6 @@
 				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSqlDatabase')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_fullload_jdbc_sql_child')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_incr_jdbc_sql_child')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_master_orch_jdbc')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "generate_batch_execution_date",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[controlTable].[GetExecutionDateV05]",
-								"storedProcedureParameters": {
-									"execdate": {
-										"type": "String",
-										"value": null
-									},
-									"firstload": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.firstload",
-											"type": "Expression"
-										}
-									},
-									"previousrunstatus": {
-										"type": "String",
-										"value": null
-									},
-									"sourcename": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.sourcename",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_mddi_controlTable_sqldb",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "get_list_of_objects_to_be_ingested",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "generate_batch_execution_date",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[controlTable].[GetListOfObjects]",
-								"storedProcedureParameters": {
-									"previousrunstatus": {
-										"type": "String",
-										"value": {
-											"value": "@activity('generate_batch_execution_date').output.firstRow.previousrunstatus",
-											"type": "Expression"
-										}
-									},
-									"retryfailedflag": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.retryfailedflag",
-											"type": "Expression"
-										}
-									},
-									"sourcename": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.sourcename",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_mddi_controlTable_sqldb",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "iterate_through_each_object",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "get_list_of_objects_to_be_ingested",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('get_list_of_objects_to_be_ingested').output.value",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"activities": [
-								{
-									"name": "get_object_level_config",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"policy": {
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "pl_jdbc_config_parser",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"execution_date": {
-												"value": "@activity('generate_batch_execution_date').output.firstRow.execdate",
-												"type": "Expression"
-											},
-											"source": {
-												"value": "@pipeline().parameters.sourcename",
-												"type": "Expression"
-											},
-											"tableName": {
-												"value": "@item().tableName",
-												"type": "Expression"
-											},
-											"firstload": {
-												"value": "@pipeline().parameters.firstload",
-												"type": "Expression"
-											}
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"sourcename": {
-						"type": "string"
-					},
-					"firstload": {
-						"type": "string",
-						"defaultValue": "F"
-					},
-					"retryfailedflag": {
-						"type": "string",
-						"defaultValue": "F"
-					}
-				},
-				"folder": {
-					"name": "MDDI_V01"
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-05-22T10:03:15Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_mddi_controlTable_sqldb')]",
-				"[concat(variables('factoryId'), '/pipelines/pl_jdbc_config_parser')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/source1_subsequentload')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pl_master_orch_jdbc",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"sourcename": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename')]",
-							"firstload": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_firstload')]",
-							"retryfailedflag": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2024-05-30T19:25:00",
-						"timeZone": "India Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_master_orch_jdbc')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/source1_trigger_firstload')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pl_master_orch_jdbc",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"sourcename": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]",
-							"firstload": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]",
-							"retryfailedflag": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2024-05-30T19:15:00",
-						"timeZone": "India Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_master_orch_jdbc')]"
 			]
 		}
 	]
