@@ -157,24 +157,6 @@
 					},
 					"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
 						"value": "[parameters('source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "vvtestfirstADF_ArmTemplate_1",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
 					},
 					"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
 						"value": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]"
@@ -193,6 +175,24 @@
 					},
 					"source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
 						"value": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "vvtestfirstADF_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"source2_subsequent_properties_pl_master_orch_jdbc_parameters_sourcename": {
 						"value": "[parameters('source2_subsequent_properties_pl_master_orch_jdbc_parameters_sourcename')]"

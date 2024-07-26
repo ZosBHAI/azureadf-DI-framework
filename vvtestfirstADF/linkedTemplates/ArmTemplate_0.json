@@ -59,6 +59,30 @@
 		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
 			"type": "string",
 			"defaultValue": "F"
+		},
+		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+			"type": "string",
+			"defaultValue": "source1"
+		},
+		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
+			"type": "string",
+			"defaultValue": "T"
+		},
+		"source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+			"type": "string",
+			"defaultValue": "F"
+		},
+		"source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename": {
+			"type": "string",
+			"defaultValue": "source2"
+		},
+		"source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload": {
+			"type": "string",
+			"defaultValue": "T"
+		},
+		"source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag": {
+			"type": "string",
+			"defaultValue": "F"
 		}
 	},
 	"variables": {
@@ -184,45 +208,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "sourceName",
-						"type": "varchar"
-					},
-					{
-						"name": "TableName",
-						"type": "varchar"
-					},
-					{
-						"name": "Config",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "controlTable",
-					"table": "TestPipelineRun"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_AzureSqlDatabase')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ds_mddi_azuresqldb')]",
@@ -1127,86 +1112,6 @@
 				"[concat(variables('factoryId'), '/datasets/ds_mddi_azuresqldb')]",
 				"[concat(variables('factoryId'), '/datasets/ds_mddi_parquet_parameterized')]",
 				"[concat(variables('factoryId'), '/linkedServices/ls_asdb_parameterized')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/tst_pl_generate_execution_date')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "generate_batch_execution_date",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[controlTable].[GetExecutionDateV05]",
-								"storedProcedureParameters": {
-									"execdate": {
-										"type": "String",
-										"value": null
-									},
-									"firstload": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.firstload",
-											"type": "Expression"
-										}
-									},
-									"previousrunstatus": {
-										"type": "String",
-										"value": null
-									},
-									"sourcename": {
-										"type": "String",
-										"value": {
-											"value": "@pipeline().parameters.sourcename",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_mddi_controlTable_sqldb",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"sourcename": {
-						"type": "string"
-					},
-					"firstload": {
-						"type": "string"
-					},
-					"retryfailedflag": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "test_MDDI_V01"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_mddi_controlTable_sqldb')]"
 			]
 		},
 		{
@@ -2269,6 +2174,74 @@
 						"frequency": "Day",
 						"interval": 1,
 						"startTime": "2024-05-30T19:25:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_master_orch_jdbc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source1_trigger_firstload')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_master_orch_jdbc",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"sourcename": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]",
+							"firstload": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]",
+							"retryfailedflag": "[parameters('source1_trigger_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-05-30T19:15:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_master_orch_jdbc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source2_firstload')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_master_orch_jdbc",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"sourcename": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_sourcename')]",
+							"firstload": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_firstload')]",
+							"retryfailedflag": "[parameters('source2_firstload_properties_pl_master_orch_jdbc_parameters_retryfailedflag')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-05-30T19:15:00",
 						"timeZone": "India Standard Time"
 					}
 				}
