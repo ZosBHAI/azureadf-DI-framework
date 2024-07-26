@@ -2223,10 +2223,16 @@
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('ls_adlsconnection_properties_typeProperties_url')]"
+					"url": "[parameters('ls_adlsconnection_properties_typeProperties_url')]",
+					"credential": {
+						"referenceName": "cred-uami-di-adf-access-storageaccount",
+						"type": "CredentialReference"
+					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/credentials/cred-uami-di-adf-access-storageaccount')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ls_asdb_parameterized')]",

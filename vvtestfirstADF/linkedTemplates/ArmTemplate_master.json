@@ -144,9 +144,6 @@
 					"ls_AzureDataLakeStorage2_properties_typeProperties_url": {
 						"value": "[parameters('ls_AzureDataLakeStorage2_properties_typeProperties_url')]"
 					},
-					"ls_adlsconnection_properties_typeProperties_url": {
-						"value": "[parameters('ls_adlsconnection_properties_typeProperties_url')]"
-					},
 					"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
 						"value": "[parameters('ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl')]"
 					},
@@ -155,6 +152,9 @@
 					},
 					"ls_adls_parameterized_properties_typeProperties_url": {
 						"value": "[parameters('ls_adls_parameterized_properties_typeProperties_url')]"
+					},
+					"ls_adlsconnection_properties_typeProperties_url": {
+						"value": "[parameters('ls_adlsconnection_properties_typeProperties_url')]"
 					}
 				}
 			},

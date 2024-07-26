@@ -36,10 +36,6 @@
 			"type": "string",
 			"defaultValue": "https://vvtestadfdevsg.dfs.core.windows.net/"
 		},
-		"ls_adlsconnection_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://vvtestadfdevsg.dfs.core.windows.net/"
-		},
 		"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://kv-gen2-accesskey-adf.vault.azure.net/"
@@ -51,6 +47,10 @@
 		"ls_adls_parameterized_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "@{concat('https://',linkedService().storageAccount,'.dfs.core.windows.net/')}"
+		},
+		"ls_adlsconnection_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://vvtestadfdevsg.dfs.core.windows.net/"
 		}
 	},
 	"variables": {
@@ -112,19 +112,6 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('ls_AzureSqlDatabase_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_adlsconnection')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ls_adlsconnection_properties_typeProperties_url')]"
 				}
 			},
 			"dependsOn": []
@@ -348,6 +335,25 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_getStorageAccount_access')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_adlsconnection')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_adlsconnection_properties_typeProperties_url')]",
+					"credential": {
+						"referenceName": "cred-uami-di-adf-access-storageaccount",
+						"type": "CredentialReference"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/credentials/cred-uami-di-adf-access-storageaccount')]"
 			]
 		},
 		{
