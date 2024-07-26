@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_AzureSqlDatabase'"
 		},
+		"ls_adls_parameterized_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_parameterized'"
+		},
 		"ls_asdb_parameterized_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_asdb_parameterized'",
@@ -39,14 +43,6 @@
 		"ls_adlsconnection_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://vvtestadfdevsg.dfs.core.windows.net/"
-		},
-		"ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://kv-gen2-accesskey-adf.vault.azure.net/"
-		},
-		"ls_getStorageAccount_access_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://kv-storageaccount-dlk.vault.azure.net/"
 		},
 		"source1_subsequentload_properties_pl_master_orch_jdbc_parameters_sourcename": {
 			"type": "string",
@@ -2202,18 +2198,12 @@
 				"typeProperties": {
 					"url": "[parameters('ls_adls_parameterized_properties_typeProperties_url')]",
 					"accountKey": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "ls_getStorageAccount_access",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "di-storageaccount-secret"
+						"type": "SecureString",
+						"value": "[parameters('ls_adls_parameterized_accountKey')]"
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_getStorageAccount_access')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ls_adlsconnection')]",
@@ -2257,32 +2247,6 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('ls_asdb_parameterized_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_azurekeyvault_gen2_access')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('ls_azurekeyvault_gen2_access_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_getStorageAccount_access')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('ls_getStorageAccount_access_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
