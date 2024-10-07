@@ -64,9 +64,6 @@
 		},
 		"source2_subsequent_properties_pl_master_orch_jdbc_parameters_firstload": {
 			"value": "F"
-		},
-		"default_properties_ADLSStorageAccount_value": {
-			"value": "vvtestadfdevsg"
 		}
 	}
 }

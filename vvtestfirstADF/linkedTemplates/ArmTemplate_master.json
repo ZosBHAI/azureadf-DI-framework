@@ -88,10 +88,6 @@
 			"type": "string",
 			"defaultValue": "F"
 		},
-		"default_properties_ADLSStorageAccount_value": {
-			"type": "string",
-			"defaultValue": "vvtestadfdevsg"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -108,7 +104,7 @@
 		{
 			"name": "vvtestfirstADF_ArmTemplate_0",
 			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
+			"apiVersion": "2024-03-01",
 			"properties": {
 				"mode": "incremental",
 				"templateLink": {
@@ -133,9 +129,6 @@
 					},
 					"ls_asdb_parameterized_connectionString": {
 						"value": "[parameters('ls_asdb_parameterized_connectionString')]"
-					},
-					"default_properties_ADLSStorageAccount_value": {
-						"value": "[parameters('default_properties_ADLSStorageAccount_value')]"
 					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
@@ -183,7 +176,7 @@
 		{
 			"name": "vvtestfirstADF_ArmTemplate_1",
 			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
+			"apiVersion": "2024-03-01",
 			"properties": {
 				"mode": "incremental",
 				"templateLink": {
