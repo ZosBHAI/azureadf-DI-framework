@@ -1,0 +1,68 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "DECLARE @ColumnDatatypes TABLE (ColumnNames NVARCHAR(128), DataType NVARCHAR(128));\nDECLARE @SQL NVARCHAR(MAX) = '';\nDECLARE @TableName NVARCHAR(128) = 'Orders' \nINSERT INTO @ColumnDatatypes\nSELECT \n    c.name,\n    t.Name \n \nFROM    \n    sys.columns c\nINNER JOIN \n    sys.types t ON c.user_type_id = t.user_type_id\nLEFT OUTER JOIN \n    sys.index_columns ic ON ic.object_id = c.object_id AND ic.column_id = c.column_id\nLEFT OUTER JOIN \n    sys.indexes i ON ic.object_id = i.object_id AND ic.index_id = i.index_id\nWHERE\n    c.object_id = OBJECT_ID('Orders')\n\nSELECT @SQL = STRING_AGG(\n    CASE\n        WHEN DataType = 'int' THEN 'CAST(' + ColumnNames + ' AS VARCHAR) AS ' + ColumnNames\n        ELSE ColumnNames\n    END, ', ')\nFROM @ColumnDatatypes\nSET @SQL = 'SELECT ' + @SQL + ' FROM ' + @TableName\nSELECT @sql AS 'sqlgenerated'"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Script1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "dynSQL",
+					"value": {
+						"value": "@activity('Script1').output.resultSets[0].rows[0].sqlgenerated",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"tablename": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"dynSQL": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
